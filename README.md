@@ -1,66 +1,43 @@
 # TRD Plugin Marketplace
 
-A Claude Code plugin marketplace.
+The Returning Dev's [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin marketplace. Catalog: [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json).
 
-## What this is
+## Available plugins
 
-A marketplace is a git repository that catalogs Claude Code plugins. The catalog lives in `.claude-plugin/marketplace.json`. Each plugin lives in its own directory under `plugins/` and is listed in that manifest.
+### trd-development
 
-## Connecting to this marketplace
+Software development skills and agents. Lives in [`plugins/trd-development/`](plugins/trd-development/).
 
-Local development:
+Skills:
+
+- **nfr** — Applies The Returning Dev's non-functional requirements to a project. Detects the project type, confirms it with you, then copies only the applicable requirement docs into `./nfr/` and references them as mandatory in `CLAUDE.md`. Selection: `general` (always), `development` (software projects), `python` (Python projects), `web` (projects with a web component).
+
+## Connecting
+
+```
+/plugin marketplace add thereturningdev/claude-trd-plugins
+```
+
+Then browse and install:
+
+```
+/plugin                                    # browse
+/plugin install trd-development@trd        # install a plugin
+/plugin marketplace update trd             # refresh the catalog later
+```
+
+For local development against this checkout, point at the path instead:
 
 ```
 /plugin marketplace add /Users/fdiotalevi/TRDWorkspace/claude-trd-plugins
 ```
 
-From GitHub once pushed:
+## Adding a plugin
 
-```
-/plugin marketplace add <owner>/claude-trd-plugins
-```
-
-Browse and install plugins with the `/plugin` command. Refresh the catalog later with:
-
-```
-/plugin marketplace update trd
-```
-
-## Adding a new plugin
-
-1. Create `plugins/<name>/.claude-plugin/plugin.json` with a minimal manifest:
-
-   ```json
-   {
-     "name": "<name>",
-     "description": "What this plugin does",
-     "version": "0.1.0"
-   }
-   ```
-
-2. Add components inside `plugins/<name>/`, which Claude Code auto-discovers:
-   - `commands/` for slash commands
-   - `agents/` for subagents
-   - `skills/` for skills (each a `SKILL.md` in its own subdirectory)
-   - `hooks/hooks.json` for event hooks
-   - `.mcp.json` for MCP servers
-
-3. Register the plugin in `.claude-plugin/marketplace.json` by adding an object to the `plugins` array:
-
-   ```json
-   {
-     "name": "<name>",
-     "source": "./plugins/<name>",
-     "description": "What this plugin does"
-   }
-   ```
-
-4. Reload and install:
-
-   ```
-   /plugin marketplace update trd
-   /plugin install <name>@trd
-   ```
+1. Create `plugins/<name>/.claude-plugin/plugin.json`.
+2. Add components under `plugins/<name>/` — Claude Code auto-discovers `skills/`, `agents/`, `commands/`, `hooks/hooks.json`, `.mcp.json`.
+3. Register it in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) with `name`, `source` (`./plugins/<name>`), and `description`.
+4. Reload: `/plugin marketplace update trd`.
 
 ## Structure
 
@@ -68,7 +45,8 @@ Browse and install plugins with the `/plugin` command. Refresh the catalog later
 .
 ├── .claude-plugin/
 │   └── marketplace.json   # the catalog
-├── plugins/               # plugin directories live here
+├── plugins/
+│   └── trd-development/    # software development skills & agents
 ├── README.md
 └── LICENSE
 ```

@@ -59,6 +59,8 @@ These non-functional requirements (NFRs) apply the project in this workspace and
 
 - The architecture of the system is modular. Every module is self-contained in one folder.
 - You MUST NOT declare any implementation task complete UNTIL you have created automated tests to verify it, and run successfully automated tests
+- As a consequence, you must build a test harness for each task implemented, including UI and Web
+- When you implement, you iterate until the test harness works successfully. You must not ask the user to test. You must not declare a task working until you proved through your test harness to be working
 - You MUST provide a shell script to run each module
 - You MUST provide a shell script to allow the initial setup of the whole project. Such shell script MUST be usable to update the setup of the project as well
 - Follow Strictly YAGNI principles. Do not write code that is not needed. Do not be verbose in writing codes or in giving explanation to the user.
