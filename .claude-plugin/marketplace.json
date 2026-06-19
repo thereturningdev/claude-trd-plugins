@@ -1,0 +1,11 @@
+{
+  "name": "trd",
+  "owner": {
+    "name": "Filippo Diotalevi",
+    "email": "filippo.diotalevi@gmail.com"
+  },
+  "metadata": {
+    "description": "TRD plugin marketplace for Claude Code."
+  },
+  "plugins": []
+}
