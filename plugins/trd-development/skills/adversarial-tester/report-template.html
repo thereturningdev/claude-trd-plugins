@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adversarial Test Report</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #181b22; --border: #2a2f3a; --text: #e6e9ef;
+    --muted: #9aa3b2; --pass: #2ea043; --fail: #f85149; --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem; background: var(--bg); color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  h1 { margin: 0 0 .25rem; font-size: 1.5rem; }
+  .meta { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
+  .meta dl { display: grid; grid-template-columns: max-content 1fr; gap: .15rem 1rem; margin: .5rem 0 0; }
+  .meta dt { color: var(--muted); }
+  .meta dd { margin: 0; color: var(--text); word-break: break-word; }
+  .cards { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1rem 1.25rem; min-width: 130px;
+  }
+  .card .n { font-size: 1.9rem; font-weight: 700; }
+  .card .l { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+  .card.pass .n { color: var(--pass); }
+  .card.fail .n { color: var(--fail); }
+  .controls { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-bottom: 1rem; }
+  .controls input[type=search], .controls select {
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    border-radius: 8px; padding: .45rem .6rem; font-size: .9rem;
+  }
+  .controls label { color: var(--muted); font-size: .9rem; display: inline-flex; gap: .4rem; align-items: center; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel);
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: .6rem .75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { position: sticky; top: 0; background: #1f242e; font-size: .8rem; text-transform: uppercase;
+    letter-spacing: .03em; color: var(--muted); }
+  tr.fail { background: rgba(248, 81, 73, .07); }
+  td.status { font-weight: 700; white-space: nowrap; }
+  td.status.pass { color: var(--pass); }
+  td.status.fail { color: var(--fail); }
+  td pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: .82rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--text); }
+  td .cat { font-size: .78rem; color: var(--accent); }
+  .empty { color: var(--muted); padding: 2rem; text-align: center; }
+</style>
+</head>
+<body>
+  <h1>Adversarial Test Report</h1>
+  <div class="meta" id="meta"></div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search description / input / expected / actual…">
+    <select id="category"><option value="">All categories</option></select>
+    <label><input type="checkbox" id="failOnly"> Failures only</label>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Description</th><th>Input</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+// === BEGIN REPORT DATA — the tester agent replaces the object below ===
+const REPORT = {
+  meta: { target: "", testType: "", framework: "", command: "", testFiles: [], budget: "", generatedAt: "" },
+  results: []
+};
+// === END REPORT DATA ===
+
+function esc(v) {
+  if (v === null || v === undefined) return "";
+  return String(v).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+const results = Array.isArray(REPORT.results) ? REPORT.results : [];
+const m = REPORT.meta || {};
+
+document.getElementById("meta").innerHTML = `
+  <dl>
+    <dt>Target</dt><dd>${esc(m.target) || "—"}</dd>
+    <dt>Test type</dt><dd>${esc(m.testType) || "—"}</dd>
+    <dt>Framework</dt><dd>${esc(m.framework) || "—"}</dd>
+    <dt>Command</dt><dd>${esc(m.command) || "—"}</dd>
+    <dt>Test files</dt><dd>${(m.testFiles || []).map(esc).join("<br>") || "—"}</dd>
+    <dt>Budget</dt><dd>${esc(m.budget) || "—"}</dd>
+    <dt>Generated</dt><dd>${esc(m.generatedAt) || "—"}</dd>
+  </dl>`;
+
+const total = results.length;
+const failed = results.filter(r => r.status === "fail").length;
+const passed = total - failed;
+const rate = total ? Math.round((passed / total) * 100) : 0;
+document.getElementById("cards").innerHTML = `
+  <div class="card"><div class="n">${total}</div><div class="l">Total</div></div>
+  <div class="card pass"><div class="n">${passed}</div><div class="l">Passed</div></div>
+  <div class="card fail"><div class="n">${failed}</div><div class="l">Failed</div></div>
+  <div class="card"><div class="n">${rate}%</div><div class="l">Pass rate</div></div>`;
+
+const catSel = document.getElementById("category");
+[...new Set(results.map(r => r.category).filter(Boolean))].sort().forEach(c => {
+  const o = document.createElement("option"); o.value = c; o.textContent = c; catSel.appendChild(o);
+});
+
+const search = document.getElementById("search");
+const failOnly = document.getElementById("failOnly");
+const rowsEl = document.getElementById("rows");
+
+function render() {
+  const q = search.value.toLowerCase();
+  const cat = catSel.value;
+  const only = failOnly.checked;
+  const shown = results.filter(r => {
+    if (only && r.status !== "fail") return false;
+    if (cat && r.category !== cat) return false;
+    if (q) {
+      const hay = [r.description, r.input, r.expected, r.actual, r.notes].map(x => String(x ?? "")).join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  if (!shown.length) {
+    rowsEl.innerHTML = `<tr><td colspan="6" class="empty">No cases match.</td></tr>`;
+    return;
+  }
+  rowsEl.innerHTML = shown.map(r => `
+    <tr class="${r.status === "fail" ? "fail" : ""}">
+      <td>${esc(r.id)}<div class="cat">${esc(r.category)}</div></td>
+      <td>${esc(r.description)}${r.notes ? `<pre>${esc(r.notes)}</pre>` : ""}</td>
+      <td><pre>${esc(r.input)}</pre></td>
+      <td><pre>${esc(r.expected)}</pre></td>
+      <td><pre>${esc(r.actual)}</pre></td>
+      <td class="status ${r.status === "fail" ? "fail" : "pass"}">${esc(r.status)}</td>
+    </tr>`).join("");
+}
+
+[search, catSel, failOnly].forEach(el => el.addEventListener("input", render));
+render();
+</script>
+</body>
+</html>
