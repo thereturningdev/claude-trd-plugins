@@ -13,3 +13,22 @@
 **Functional-test every feature.** For every new feature you implement, write and run an
    automated functional test that exercises the feature's real behaviour (not just unit tests of
    helpers). Every functional test must pass before you may declare the feature complet
+
+
+## Bundling a desktop app: prove the package is complete 
+
+This applies to **any** distributable desktop app — a macOS `.app`, a Windows
+installer/`.exe`, a Linux AppImage/`.deb`, an Electron/Tauri package, etc. — and to
+everything it must carry: libraries, frameworks, plugins, runtimes, fonts, data files,
+locales, models, any resource the app loads at runtime.
+
+YOU MUST ENSURE ALL THE NECESSARY DEPENDENCIES ARE BUNDLE IN THE APPLICATION.
+1. **Build the package from a clean tree for releases.** Stale incremental build output
+   silently omits the resources/libraries of newly-added dependencies. Don't package over a
+   build dir of unknown age.
+2. **Make packaging self-verifying** Maintain an explicit list of the
+   libraries/frameworks/resources the app *must* contain, and after assembling the package,
+   assert each one is actually present in the final bundle. **Fail the build loudly** if any
+   is missing
+3. **"It signed / notarized / linted / CI-passed" is NOT evidence it runs.** Never report a
+   build as done on the strength of those steps alone.
