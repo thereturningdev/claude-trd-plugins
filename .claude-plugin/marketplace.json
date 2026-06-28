@@ -9,8 +9,8 @@
   },
   "plugins": [
     {
-      "name": "trd-development",
-      "source": "./plugins/trd-development",
+      "name": "trd-dev",
+      "source": "./plugins/trd-dev",
       "description": "Software development skills and agents by The Returning Dev."
     }
   ]

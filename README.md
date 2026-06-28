@@ -4,9 +4,9 @@ The Returning Dev's [Claude Code](https://docs.claude.com/en/docs/claude-code) p
 
 ## Available plugins
 
-### trd-development
+### trd-dev
 
-Software development skills and agents. Lives in [`plugins/trd-development/`](plugins/trd-development/).
+Software development skills and agents. Lives in [`plugins/trd-dev/`](plugins/trd-dev/).
 
 Skills:
 
@@ -27,7 +27,7 @@ Then browse and install:
 
 ```
 /plugin                                    # browse
-/plugin install trd-development@trd        # install a plugin
+/plugin install trd-dev@trd                # install a plugin
 /plugin marketplace update trd             # refresh the catalog later
 ```
 
@@ -51,7 +51,7 @@ For local development against this checkout, point at the path instead:
 ├── .claude-plugin/
 │   └── marketplace.json   # the catalog
 ├── plugins/
-│   └── trd-development/    # software development skills & agents
+│   └── trd-dev/            # software development skills & agents
 ├── README.md
 └── LICENSE
 ```

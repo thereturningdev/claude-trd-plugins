@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Auto-bump the trd-development plugin's patch version when a push includes
+# Auto-bump the trd-dev plugin's patch version when a push includes
 # changes to the plugin's content (skills, agents, templates, etc.) but does
 # NOT already bump the version.
 #
@@ -14,7 +14,7 @@
 # push again (the new commit can't be added to an in-flight push). Subsequent
 # pushes that already include a version change pass straight through.
 
-PLUGIN_DIR="plugins/trd-development"
+PLUGIN_DIR="plugins/trd-dev"
 MANIFEST="$PLUGIN_DIR/.claude-plugin/plugin.json"
 ZERO="0000000000000000000000000000000000000000"
 
@@ -60,7 +60,7 @@ tmp=$(mktemp)
 sed -E "s/(\"version\" *: *\")[0-9]+\.[0-9]+\.[0-9]+(\")/\1${new}\2/" "$MANIFEST" >"$tmp" && mv "$tmp" "$MANIFEST"
 
 git add "$MANIFEST"
-git commit -m "chore: bump trd-development to ${new}" >/dev/null
+git commit -m "chore: bump trd-dev to ${new}" >/dev/null
 
 echo "" >&2
 echo "pre-push: plugin content changed but the version wasn't bumped." >&2

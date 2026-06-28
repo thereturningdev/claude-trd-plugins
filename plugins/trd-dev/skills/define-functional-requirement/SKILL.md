@@ -104,10 +104,10 @@ sentence and rewrite any that fail these checks:
 - **No vague nouns.** Words like "project", "repo", "codebase", "workflow",
   "script", "the system", "the service" are only allowed when immediately made
   specific. Always name the thing:
-  - a project → name it (e.g. "the `trd-development` plugin").
+  - a project → name it (e.g. "the `trd-dev` plugin").
   - a repo → name it (e.g. "the `claude-trd-plugins` repo").
   - a script or file → give its path relative to the project root
-    (e.g. `plugins/trd-development/skills/define-functional-requirement/SKILL.md`).
+    (e.g. `plugins/trd-dev/skills/define-functional-requirement/SKILL.md`).
 - **Highest accuracy.** Every claim must be checkable. Don't state behavior you
   haven't confirmed; if something is unknown, write it as an open question
   rather than guessing.

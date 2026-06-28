@@ -81,7 +81,7 @@ functional and non-functional requirements, not just the task text.
 > requirements.**
 >
 > When the task's functionality is complete, run an **adversarial pass**: invoke
-> the `trd-development:adversarial-tester` skill against the functionality you just
+> the `trd-dev:adversarial-tester` skill against the functionality you just
 > built to surface edge cases and bugs. Fix the cases that violate the requirement;
 > note any that fall outside it (do not gold-plate). Keep its tests, and re-run the
 > adversarial pass until the in-scope cases pass.
