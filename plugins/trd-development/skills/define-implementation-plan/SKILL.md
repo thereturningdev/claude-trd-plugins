@@ -102,9 +102,11 @@ If it is unclear whether a tracker is in use, ask the user.
 ## implementation-plan-template.html
 
 Minimal early-web HTML, same compact style block as the requirement template.
-Replace the `{{PLACEHOLDER}}`s; `{{TASKS}}` is one `<h3>` + block per task whose
-heading ends with its order (e.g. `(1/3)`). The template's HTML comment shows the
-per-task shape. Don't add external dependencies or heavier styling.
+Replace the `{{PLACEHOLDER}}`s; `{{TASKS}}` is one `<h3>` + block per task. Every
+task heading **must start with a sequential number, beginning at 1 and increasing
+by 1 with no gaps** (`1.`, `2.`, `3.`, …) — including when there is only one task
+(`1.`). The template's HTML comment shows the per-task shape. Don't add external
+dependencies or heavier styling.
 
 ## Writing standards
 
@@ -133,3 +135,5 @@ unknown, record it as an open question rather than guessing.
   fresh agent reading it in isolation with no questions; rewrite until it does.
 - **A shared interface defined in only one ticket** — define it fully and
   identically in both, so neither agent has to infer it.
+- **HTML tasks not sequentially numbered** — in `implementation-plan.html` every
+  task heading must start with a sequential number from 1 with no gaps.
