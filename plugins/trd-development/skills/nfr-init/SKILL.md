@@ -1,18 +1,26 @@
 ---
-name: nfr
-description: Use when setting up or refreshing a project's non-functional requirements - detects the project type (with the user's confirmation), selects only the applicable bundled NFR documents, drops them into ./nfr/, and wires them into CLAUDE.md as mandatory.
+name: nfr-init
+description: Use to INITIALIZE a project's non-functional requirements, or to UPDATE them when the project has changed significantly (e.g. it gained Python or a web component) or the bundled NFR set changed. Detects the project type (with the user's confirmation), selects only the applicable bundled NFR documents, drops them into ./nfr/, and wires them into CLAUDE.md as mandatory.
 ---
 
-# nfr — Apply Non-Functional Requirements to a Project
+# nfr-init — Initialize or Update a Project's Non-Functional Requirements
 
-Selects the bundled non-functional-requirement documents that apply to THIS
+This skill exists purely to **initialize** a project's non-functional
+requirements — or to **update** them when the project has changed significantly.
+It selects the bundled non-functional-requirement documents that apply to THIS
 project, copies them into the project's `./nfr/` folder, and makes `CLAUDE.md`
-treat them as mandatory.
+treat them as mandatory. It is not a tool for authoring or editing requirement
+content (that lives in the bundled `requirements/` library).
 
 ## When to use
 
-Run this when bootstrapping a project, or to refresh an existing project after the
-bundled NFR set changes.
+- **Initialize** — bootstrapping a project that has no `./nfr/` set yet.
+- **Update** — the project changed significantly since the NFRs were last applied
+  (for example it gained a web frontend or started using Python, so a different
+  set of documents now applies), or the bundled NFR library itself changed.
+
+Re-running is safe: the selection is recomputed and `./nfr/` plus the `CLAUDE.md`
+section are reconciled to it.
 
 ## The bundled library
 

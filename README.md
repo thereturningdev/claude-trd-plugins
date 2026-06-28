@@ -10,7 +10,8 @@ Software development skills and agents. Lives in [`plugins/trd-development/`](pl
 
 Skills:
 
-- **nfr** — Applies The Returning Dev's non-functional requirements to a project. Detects the project type, confirms it with you, then copies only the applicable requirement docs into `./nfr/` and references them as mandatory in `CLAUDE.md`. Selection: `general` (always), `development` (software projects), `python` (Python projects), `web` (projects with a web component).
+- **nfr-init** — Initializes a project's non-functional requirements, or updates them when the project has changed significantly. Detects the project type, confirms it with you, then copies only the applicable requirement docs into `./nfr/` and references them as mandatory in `CLAUDE.md`. Selection: `general` (always), `development` (software projects), `python` (Python projects), `web` (projects with a web component).
+- **define-functional-requirement** — Turns a rough feature idea or bug-fix request (from chat or a ticket) into a structured functional requirement. Asks clarifying and edge-case questions, optionally builds HTML mockups for approval, then writes an HTML requirement under `docs/<feature-slug>/`. When the idea came from a ticket, it rewrites the ticket with the complete definition and links the requirement back to it.
 - **adversarial-tester** — Dispatches a tester agent to break a chosen function or module. It writes a large batch of edge-case tests (kept in the repo as a regression suite), runs them against the target's *intended* behavior, and produces a self-contained `adversarial-test-report.html` in the working directory listing every passing and failing case.
 
 ## Connecting
