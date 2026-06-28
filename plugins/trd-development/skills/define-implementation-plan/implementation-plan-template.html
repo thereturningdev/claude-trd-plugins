@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}}</title>
+<style>
+  body { font-family: Georgia, "Times New Roman", serif; max-width: 1200px; margin: 2em auto; padding: 0 1em; }
+  section { margin-bottom: 2em; }
+  p, li { margin: 0.5em 0; }
+  h1 { font-size: 1.8em; font-weight: bold; }
+  h2 { font-size: 1.3em; font-weight: bold; }
+  h3 { font-size: 1em; font-weight: bold; }
+  body { line-height: 1.65; color: #2b2b2b; }
+  h1, h2, h3 { color: #1a1a1a; letter-spacing: -0.015em; }
+  h1 { border-bottom: 3px solid #333; padding-bottom: 0.2em; }
+  h2 { border-bottom: 1px solid #ddd; padding-bottom: 0.15em; }
+  a { color: #0b66c3; }
+</style>
+</head>
+<body>
+
+<h1>Implementation Plan — {{TITLE}}</h1>
+<p><b>Feature slug:</b> {{SLUG}} &middot; <b>Source:</b> {{SOURCE}} &middot; <b>Date:</b> {{DATE}}</p>
+<p><b>Requirement:</b> <a href="requirement.html">requirement.html</a></p>
+
+<section>
+  <h2>Chosen Approach</h2>
+  <p>{{APPROACH}}</p>
+</section>
+
+<section>
+  <h2>Implementation Tasks</h2>
+  {{TASKS}}
+  <!--
+    One <h3> + block per task. Title ends with its order, e.g. (1/3).
+    Each task must be independently testable and independently releasable
+    (even if shipped disabled behind a flag).
+
+    <h3>Goal of the task (1/3)</h3>
+    <p><b>Scope:</b> what this task changes.</p>
+    <p><b>Independently testable:</b> how this task is verified on its own.</p>
+    <p><b>Independently releasable:</b> how it ships safely on its own (e.g. behind a disabled flag).</p>
+    <p><b>Depends on:</b> earlier task(s), or none.</p>
+    <p><b>Done when:</b> the acceptance check for this task.</p>
+  -->
+</section>
+
+</body>
+</html>
