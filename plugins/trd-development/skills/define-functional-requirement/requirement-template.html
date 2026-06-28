@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}}</title>
+<style>
+  body { font-family: Georgia, "Times New Roman", serif; max-width: 800px; margin: 2em auto; padding: 0 1em; }
+  section { margin-bottom: 2em; }
+  p, li { margin: 0.5em 0; }
+  h1 { font-size: 1.8em; font-weight: bold; }
+  h2 { font-size: 1.4em; font-weight: bold; }
+  h3 { font-size: 1.1em; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>{{TITLE}}</h1>
+<p><b>Feature slug:</b> {{SLUG}} &middot; <b>Source:</b> {{SOURCE}} &middot; <b>Date:</b> {{DATE}}</p>
+
+<section>
+  <h2>Summary</h2>
+  <p>{{SUMMARY}}</p>
+</section>
+
+<section>
+  <h2>Background &amp; Context</h2>
+  <p>{{BACKGROUND}}</p>
+</section>
+
+<section>
+  <h2>Functional Requirements</h2>
+  {{REQUIREMENTS}}
+</section>
+
+<section>
+  <h2>Edge Cases</h2>
+  {{EDGE_CASES}}
+</section>
+
+<section>
+  <h2>Mockups</h2>
+  {{MOCKUPS}}
+</section>
+
+<section>
+  <h2>Acceptance Criteria</h2>
+  {{ACCEPTANCE_CRITERIA}}
+</section>
+
+<section>
+  <h2>Out of Scope</h2>
+  {{OUT_OF_SCOPE}}
+</section>
+
+</body>
+</html>
