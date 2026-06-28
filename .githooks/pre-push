@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+# Auto-bump the trd-development plugin's patch version when a push includes
+# changes to the plugin's content (skills, agents, templates, etc.) but does
+# NOT already bump the version.
+#
+# Why this exists: Claude Code caches an installed plugin by its version. If you
+# change a skill without bumping the version, reloading the marketplace will NOT
+# refresh the cache and the change won't appear. This hook makes the bump
+# automatic so you never have to remember.
+#
+# Behaviour: on the first push where content changed but the version didn't, it
+# bumps the patch version, commits that bump, and aborts the push asking you to
+# push again (the new commit can't be added to an in-flight push). Subsequent
+# pushes that already include a version change pass straight through.
+
+PLUGIN_DIR="plugins/trd-development"
+MANIFEST="$PLUGIN_DIR/.claude-plugin/plugin.json"
+ZERO="0000000000000000000000000000000000000000"
+
+bump_needed=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+	[ "$local_sha" = "$ZERO" ] && continue   # branch deletion, nothing to check
+
+	if [ "$remote_sha" = "$ZERO" ]; then
+		# New branch on the remote: compare against origin/main if we can.
+		base=$(git merge-base "$local_sha" origin/main 2>/dev/null)
+		if [ -n "$base" ]; then range="$base..$local_sha"; else range="$local_sha"; fi
+	else
+		range="$remote_sha..$local_sha"
+	fi
+
+	# Did any plugin content (other than the manifest itself) change?
+	content_changed=$(git diff --name-only "$range" -- "$PLUGIN_DIR" ":(exclude)$MANIFEST" 2>/dev/null)
+	[ -z "$content_changed" ] && continue
+
+	# Was the version already bumped somewhere in this range?
+	if git diff "$range" -- "$MANIFEST" 2>/dev/null | grep -q '^+.*"version"'; then
+		continue
+	fi
+
+	bump_needed=1
+done
+
+[ "$bump_needed" = "0" ] && exit 0
+
+current=$(sed -nE 's/.*"version" *: *"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/p' "$MANIFEST" | head -1)
+if [ -z "$current" ]; then
+	echo "pre-push: could not parse a version from $MANIFEST" >&2
+	exit 1
+fi
+
+major=$(echo "$current" | cut -d. -f1)
+minor=$(echo "$current" | cut -d. -f2)
+patch=$(echo "$current" | cut -d. -f3)
+new="$major.$minor.$((patch + 1))"
+
+tmp=$(mktemp)
+sed -E "s/(\"version\" *: *\")[0-9]+\.[0-9]+\.[0-9]+(\")/\1${new}\2/" "$MANIFEST" >"$tmp" && mv "$tmp" "$MANIFEST"
+
+git add "$MANIFEST"
+git commit -m "chore: bump trd-development to ${new}" >/dev/null
+
+echo "" >&2
+echo "pre-push: plugin content changed but the version wasn't bumped." >&2
+echo "  -> auto-bumped ${current} -> ${new} and committed it." >&2
+echo "  -> run 'git push' again to include the bump." >&2
+echo "" >&2
+exit 1
