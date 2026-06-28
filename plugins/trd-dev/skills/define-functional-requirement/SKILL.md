@@ -20,7 +20,7 @@ The rough idea arrives in one of two ways:
 | Source | What you get | What to do |
 | --- | --- | --- |
 | **In chat** | A free-text description of the feature / bug. | Use it directly as the starting point. |
-| **Ticket reference** | A tracker (Jira, GitHub issues, other) + a ticket number. | Fetch the ticket first, then treat its contents as the starting point. At the end, **rewrite the ticket** with the complete definition and **link the HTML requirement** back to it. |
+| **Ticket reference** | A tracker (Jira, GitHub issues, other) + a ticket number. | Fetch the ticket first, then treat its contents as the starting point. **Link the HTML requirement** back to the ticket as a comment the moment it's written, and at the end **rewrite the ticket** with the complete definition. |
 
 To fetch a ticket, use whatever is available in this environment: the `gh` CLI
 for GitHub issues (`gh issue view <num>`), a Jira MCP server or CLI, or ask the
@@ -76,19 +76,29 @@ The output folder is `docs/<feature-slug>/`. Choose the slug like this:
 7. **Write the requirement.** Write the edited result to
    `docs/<feature-slug>/requirement.html`. Store any approved mockups in the same
    folder and reference them from the **Mockups** section.
-8. **User review gate.** Tell the user where the requirement was written and ask
-   them to read it and confirm before you touch the ticket:
-   > "Requirement written to `docs/<feature-slug>/requirement.html`. Please read
-   > it and confirm it's correct before I update the ticket."
+8. **Link the doc to the ticket immediately (only if one was provided).** As soon
+   as `requirement.html` exists, post a comment on the ticket linking it — e.g.
+   "Functional requirement drafted: <url-or-path>" (a public URL if the doc has
+   one, otherwise its repo-relative path). Use the same tooling used to fetch the
+   ticket (`gh issue comment <num>`, the Jira MCP/CLI, etc.). Do this **before**
+   the user review gate. This is additive and non-destructive, so it does not need
+   the user's sign-off, and posting it now guarantees the link survives even if the
+   conversation ends before the ticket body is rewritten in step 10. Skip when the
+   idea came only from chat.
+9. **User review gate.** Tell the user where the requirement was written and ask
+   them to read it and confirm before you rewrite the ticket body:
+   > "Requirement written to `docs/<feature-slug>/requirement.html` and linked on
+   > the ticket. Please read it and confirm it's correct before I rewrite the
+   > ticket description."
    Wait for their confirmation. If they request changes, make them, re-apply the
    Writing standards, and ask again. Only proceed once the user approves.
-9. **Update the ticket (only if one was provided).** When the rough idea came
-   from a ticket, rewrite the ticket with the complete, clarified definition of
-   the feature to build or bug to fix (replacing the rough description), and add
-   a link from the ticket to the generated HTML requirement document. Use the
-   same tooling used to fetch it (`gh issue edit <num>`, the Jira MCP/CLI, etc.).
-   If the requirement doc lives in the repo rather than at a public URL, link to
-   its path. Skip this step entirely when the idea came only from chat.
+10. **Rewrite the ticket body (only if one was provided).** When the rough idea
+    came from a ticket, rewrite the ticket with the complete, clarified definition
+    of the feature to build or bug to fix (replacing the rough description). The
+    link to the HTML requirement is already posted as a comment from step 8; keep
+    it in the rewritten body too. Use the same tooling used to fetch it
+    (`gh issue edit <num>`, the Jira MCP/CLI, etc.). Skip this step entirely when
+    the idea came only from chat.
 
 ## Writing standards
 
@@ -130,8 +140,11 @@ user maintains the template's styling.
   expected behavior, suspected root cause, and regression risk.
 - **Skipping the approach choice** — when more than one approach exists, offer
   2–3 with trade-offs before writing.
-- **Updating the ticket before the user signed off** — get confirmation on the
-  written requirement first.
+- **Rewriting the ticket body before the user signed off** — get confirmation on
+  the written requirement first. (Linking the doc as a comment is fine earlier —
+  do that the moment the doc exists so the link isn't lost.)
+- **Forgetting to link the doc on the ticket** — post the link as a comment as
+  soon as `requirement.html` is written, not as a final step that's easy to drop.
 - **AI-slop, jargon, or vague nouns** — no "leverage"/"seamless"/"synergy"; name
   the project, repo, and file path instead of "the codebase"/"the script".
 - **Guessing a ticket's contents** — fetch it, or ask the user to paste it.
