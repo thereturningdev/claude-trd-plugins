@@ -36,6 +36,7 @@ edit, or summarize requirement content.
 | `NFR-general.md` | **Always** — every project. |
 | `NFR-development.md` | The project is a **software-development project** (it holds or will hold source code). |
 | `NFR-python.md` | The project **uses Python**. |
+| `NFR-swift.md` | The project **uses Swift**. |
 | `NFR-web.md` | The project has a **web component** (a UI / frontend, or it serves HTTP). |
 
 If `requirements/` contains a `.md` file not listed above, ask the user whether it
@@ -49,6 +50,8 @@ applies before copying it.
 2. **Gather signals.** Inspect the project to infer its nature. Look for:
    - **Python:** `*.py`, `pyproject.toml`, `requirements.txt`, `setup.py`,
      `Pipfile`, `uv.lock`, `poetry.lock`.
+   - **Swift:** `*.swift`, `Package.swift`, `Package.resolved`, `*.xcodeproj`,
+     `*.xcworkspace`, a `Sources/` directory.
    - **Web:** `package.json` (especially with react / vue / svelte / angular /
      next / vite / express), `*.html`, `*.jsx` / `*.tsx`, a frontend `src/` or
      `public/` directory.
@@ -60,12 +63,14 @@ applies before copying it.
 3. **Ask the user.** State concisely what you detected, then ask the user to confirm
    which categories apply. The user's answer is authoritative and overrides
    detection. Confirm specifically: is this a software-development project? does it
-   use Python? does it have a web component? Default each answer to your detection.
+   use Python? does it use Swift? does it have a web component? Default each answer
+   to your detection.
 
 4. **Select files.** Apply the applicability table to the confirmed answers:
    - always → `NFR-general.md`
    - software-development → `NFR-development.md`
    - Python → `NFR-python.md`
+   - Swift → `NFR-swift.md`
    - web component → `NFR-web.md`
 
 5. **Copy.** Ensure an `nfr/` subdirectory exists in the project root. Copy each
