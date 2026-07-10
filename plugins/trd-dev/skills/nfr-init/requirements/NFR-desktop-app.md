@@ -18,8 +18,8 @@
 ## Instrument the app so an AI agent can drive and test it without a human (mandatory)
 
 **The trap this rule exists to prevent.** Interaction bugs hide in the exact place unit
-tests never look. A GUI feature can pass every unit test, an adversarial pass, and a
-multi-agent code review, and still be completely broken the moment a person uses it —
+tests never look. A GUI feature can pass every unit test and a code review, and still
+be completely broken the moment a person uses it —
 because those checks exercise pure functions and state mutations, never a real pointer or
 key event landing on a real view. A too-small hit target, an event routed to the wrong
 view, a drag that never starts: none of these are visible below the OS event layer. They

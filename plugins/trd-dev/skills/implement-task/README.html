@@ -14,7 +14,6 @@
     --border: #e2e4e9;
     --code-bg: #f4f5f7;
     --seq: #eef4ff;
-    --par: #fff4e8;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -25,7 +24,6 @@
       --border: #2a2e36;
       --code-bg: #1d2027;
       --seq: #182338;
-      --par: #322516;
     }
   }
   * { box-sizing: border-box; }
@@ -53,15 +51,8 @@
     overflow-x: auto;
     background: var(--bg);
   }
-  .legend { display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: .9rem; color: var(--muted); margin: .5rem 0 0; }
-  .legend span { display: inline-flex; align-items: center; gap: .4rem; }
-  .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--border); display: inline-block; }
-  .swatch.seq { background: var(--seq); }
-  .swatch.par { background: var(--par); }
   .tag { display: inline-block; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; padding: .12em .5em; border-radius: 20px; vertical-align: middle; }
   .tag.seq { background: var(--seq); color: var(--accent); }
-  .tag.par { background: var(--par); color: #b5670a; }
-  @media (prefers-color-scheme: dark) { .tag.par { color: #e0a24a; } }
   table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .95rem; }
   th, td { border: 1px solid var(--border); padding: .5rem .7rem; text-align: left; vertical-align: top; }
   th { background: var(--code-bg); }
@@ -79,15 +70,10 @@
     tasks in an HTML implementation plan, given individually (<code>10, 12, 15</code>) or as an
     inclusive range (<code>10..15</code> or <code>10...15</code> → every id from 10 to 15) — and builds
     each one with disciplined engineering:
-    test-driven development, KISS/YAGNI, an adversarial edge-case pass, and then an independent
-    verification stage before moving on. When no formal requirement exists, it works straight from the
-    ticket or the description you provide.
+    test-driven development, KISS/YAGNI, and then an independent verification stage before moving on.
+    When no formal requirement exists, it works straight from the ticket or the description you
+    provide.
   </p>
-
-  <div class="legend">
-    <span><span class="swatch seq"></span> Sequential (one agent, in order)</span>
-    <span><span class="swatch par"></span> Parallel (independent agents at once)</span>
-  </div>
 
   <h2>Top-level flow</h2>
   <p>
@@ -102,7 +88,7 @@ flowchart TD
     Start([Task list: tickets or plan numbers]) --> Resolve[Resolve into ordered<br/>task + requirement pairs]
     Resolve --> Loop{{For each task, in order}}
     Loop --> Build["<b>Build stage</b><br/>one general-purpose agent"]
-    Build --> Verify["<b>Verification stage</b><br/>two independent agents"]
+    Build --> Verify["<b>Verification stage</b><br/>one independent read-only agent"]
     Verify --> Verdict{Verdict?}
     Verdict -->|Clean| Report[Report results]
     Verdict -->|Fixable| Fix["Build agent fixes<br/>confirmed issues (TDD)"]
@@ -113,9 +99,7 @@ flowchart TD
     Next -->|No| Done([Done])
 
     classDef seq fill:#eef4ff,stroke:#2d6cdf,color:#1a1a1a;
-    classDef par fill:#fff4e8,stroke:#b5670a,color:#1a1a1a;
-    class Resolve,Build,Fix,Report seq;
-    class Verify par;
+    class Resolve,Build,Verify,Fix,Report seq;
   </pre>
   </div>
   <p class="note">
@@ -123,7 +107,7 @@ flowchart TD
     user is brought in.
   </p>
 
-  <h2>Inside the build stage <span class="tag seq">Sequential — 1 agent</span></h2>
+  <h2>Inside the build stage <span class="tag seq">One agent</span></h2>
   <p>
     Building is inherently serial: each TDD cycle depends on the last, and it all shares one working
     tree. A single agent carries the whole stage.
@@ -132,7 +116,7 @@ flowchart TD
   <div class="diagram">
   <pre class="mermaid">
 flowchart TD
-    R[Read spec, requirement,<br/>CLAUDE.md, ./nfr/, existing code] --> T
+    R[Read spec, requirement,<br/>CLAUDE.md, ./nfr/, existing code]
 
     subgraph TDD["TDD loop — repeat per acceptance criterion"]
       direction LR
@@ -140,50 +124,38 @@ flowchart TD
     end
 
     R --> TDD
-    TDD --> Adv["Adversarial pass<br/>(adversarial-tester skill)"]
-    Adv --> AdvFix{In-scope<br/>bugs?}
-    AdvFix -->|Yes| Adv
-    AdvFix -->|No| E2E[End-to-end functional test<br/>through real entry point]
-    E2E --> Gate["Green gate:<br/>full suite + build + lint/type all pass"]
+    TDD --> Gate["Green gate:<br/>full suite + build + lint/type all pass"]
     Gate --> Out([Report to orchestrator])
 
     classDef seq fill:#eef4ff,stroke:#2d6cdf,color:#1a1a1a;
-    class R,Red,Green,Refactor,Adv,E2E,Gate seq;
+    class R,Red,Green,Refactor,Gate seq;
   </pre>
   </div>
 
-  <h2>Inside the verification stage <span class="tag par">Parallel — 2 agents</span></h2>
+  <h2>Inside the verification stage <span class="tag seq">One read-only agent</span></h2>
   <p>
     The build agent just wrote the code, so it is the wrong reviewer for its own work — anchored on its
-    own mental model and blind to its own scope creep. Verification brings in <strong>fresh,
-    adversarial eyes</strong>. The passing tests and adversarial pass already prove the task does what
-    its acceptance criteria ask, so verification does <em>not</em> re-walk conformance. It covers the
-    two things tests miss, in two independent <strong>read-only</strong> agents that run at the same
-    time:
+    own mental model and blind to its own scope creep. Verification brings in <strong>fresh
+    eyes</strong>. The passing tests already prove the task does what its acceptance criteria ask, so
+    verification does <em>not</em> re-walk conformance. It covers the two things tests miss, both
+    handled by a single independent <strong>read-only</strong> agent:
   </p>
 
   <div class="diagram">
   <pre class="mermaid">
 flowchart TD
-    In([Task built, tests green]) --> Fork(( ))
-
-    Fork --> U["<b>Agent 1 — Unrequested / dangerous behavior</b><br/>scan the diff for behavior<br/>never asked for; rate severity"]
-    Fork --> S["<b>Agent 2 — Side effects</b><br/>predict other affected areas,<br/>then read that code and confirm/refute"]
-
-    U --> Join(( ))
-    S --> Join
-    Join --> Merge[Merge findings, drop refuted,<br/>keep only file:line-cited problems]
+    In([Task built, tests green]) --> U["<b>Check 1 — Unrequested / dangerous behavior</b><br/>scan the diff for behavior<br/>never asked for; rate severity"]
+    U --> S["<b>Check 2 — Side effects</b><br/>predict other affected areas,<br/>then read that code and confirm/refute"]
+    S --> Merge[Drop refuted findings,<br/>keep only file:line-cited problems]
     Merge --> V([Verdict: clean / fixable / fundamental])
 
-    classDef par fill:#fff4e8,stroke:#b5670a,color:#1a1a1a;
     classDef seq fill:#eef4ff,stroke:#2d6cdf,color:#1a1a1a;
-    class U,S par;
-    class Merge seq;
+    class U,S,Merge seq;
   </pre>
   </div>
 
   <table>
-    <tr><th>Agent</th><th>Looks for</th></tr>
+    <tr><th>Check</th><th>Looks for</th></tr>
     <tr>
       <td><strong>Unrequested / dangerous behavior</strong></td>
       <td>Scope creep, silent side effects, weakened validation or permissions, data loss, broadened
@@ -204,8 +176,7 @@ flowchart TD
 sequenceDiagram
     participant O as Orchestrator
     participant B as Build agent
-    participant U as Verifier: unrequested
-    participant S as Verifier: side effects
+    participant V as Verifier
 
     Note over O: Tasks run one at a time, in order
     O->>B: Implement task N (spec + requirement)
@@ -213,32 +184,28 @@ sequenceDiagram
     B-->>O: Built, tests green
     deactivate B
 
-    par Independent review
-        O->>U: Review diff for unrequested behavior
-        O->>S: Predict & verify side effects
-    and
-        U-->>O: Findings (severity-rated)
-        S-->>O: Confirmed / refuted (file:line)
-    end
+    O->>V: Review diff (unrequested behavior + side effects)
+    activate V
+    V-->>O: Findings, confirmed / refuted (file:line)
+    deactivate V
 
     alt Fixable problems
         O->>B: Fix confirmed issues (TDD)
         B-->>O: Fixed
-        O->>U: Re-verify
-        O->>S: Re-verify
+        O->>V: Re-verify
     else Clean
         Note over O: Move to task N+1
     end
   </pre>
   </div>
 
-  <h2>Where sequential vs. parallel matters</h2>
+  <h2>Why everything is sequential</h2>
   <table>
-    <tr><th>Part</th><th>Mode</th><th>Why</th></tr>
-    <tr><td>Task list</td><td><span class="tag seq">Sequential</span></td><td>Tasks share a working tree and build on each other.</td></tr>
-    <tr><td>Build stage</td><td><span class="tag seq">Sequential</span></td><td>Each TDD cycle depends on the previous one.</td></tr>
-    <tr><td>Verification</td><td><span class="tag par">Parallel</span></td><td>The two reviews are independent, so run at once for speed.</td></tr>
-    <tr><td>Fix loop</td><td><span class="tag seq">Sequential</span></td><td>The build agent fixes, then re-verification runs.</td></tr>
+    <tr><th>Part</th><th>Why</th></tr>
+    <tr><td>Task list</td><td>Tasks share a working tree and build on each other.</td></tr>
+    <tr><td>Build stage</td><td>Each TDD cycle depends on the previous one.</td></tr>
+    <tr><td>Verification</td><td>One agent, so it sees the whole diff once and reports a single verdict.</td></tr>
+    <tr><td>Fix loop</td><td>The build agent fixes, then re-verification runs.</td></tr>
   </table>
 
   <p class="note">

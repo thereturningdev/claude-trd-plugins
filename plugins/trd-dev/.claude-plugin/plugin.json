@@ -1,7 +1,7 @@
 {
   "name": "trd-dev",
   "description": "Software development skills and agents by The Returning Dev.",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "author": {
     "name": "The Returning Dev"
   },
@@ -10,7 +10,6 @@
     "nfr",
     "non-functional-requirements",
     "testing",
-    "adversarial-testing",
     "edge-cases"
   ]
 }
